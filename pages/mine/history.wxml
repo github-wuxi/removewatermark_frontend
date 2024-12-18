@@ -1,0 +1,17 @@
+<view class="top-tips">Tips：超过200M的视频需复制链接在浏览器下载~</view>
+<view class="container">
+    <view class="scroll-gap"></view>
+    <view class="video-box" wx:for="{{records}}" wx:key="id">
+        <view class="video-btm">
+            <view class="video-title">{{item.videoTitle}}</view>
+        </view>
+        <view class="video-cover">
+            <image class="video-cover-poster" mode="aspectFit" src="{{item.videoCover}}" bindtap="previewCover" data-src="{{item.videoCover}}"></image>
+        </view>
+        <view class="btn">
+            <button class="btn-left" bindtap="copyVideoUrl" data-content="{{item.videoParsedUrl}}" data-tip="已复制">复制解析后链接</button>
+            <button class="btn-right" bindtap="checkAndDownloadVideo" data-url="{{item.videoParsedUrl}}">下载解析后视频</button>
+        </view>
+    </view>
+</view>
+<view class="no-data" wx:if="{{!hasNext}}">解析记录已经到底啦~</view>

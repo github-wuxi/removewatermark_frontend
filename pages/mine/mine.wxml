@@ -1,0 +1,54 @@
+<view class="center">
+    <view class="blue-top">
+        <view class="user-card">
+            <view class="card-top">
+                <view class="user-top">
+                    <view class="user-vip" style="position:relative;">
+                        <image class="user-pic" src="{{userInfo != null ? userInfo.avatarUrl : '/images/my.png'}}"></image>
+                    </view>
+                    <view class="user-board">
+                        <button wx:if="{{userInfo == null}}" class="user-name" open-type="getUserInfo" bindgetuserinfo="authorizedLogin">点此登录</button>
+                        <view wx:if="{{userInfo != null}}" class="user-name">{{userInfo.nickName}}</view>
+                    </view>
+                </view>
+            </view>
+            <view class="card-bottom">
+                <view class="left">
+                    <view class="count">
+                        <text class="num">{{availableNumber}} 次</text>
+                    </view>
+                    <text class="txt">剩余解析次数</text>
+                </view>
+                <view class="right">
+                    <view class="count">
+                        <text class="num">{{parsedNumber}} 次</text>
+                    </view>
+                    <text class="txt">共为您解析次数</text>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="center-list">
+        <navigator class="center-list-item" url="/pages/mine/history">
+            <icon class="iconfont icon-jilu"></icon>
+            <text class="list-text">  我的解析记录</text>
+        </navigator>
+        <!-- <button class="center-list-item" open-type="contact">
+            <icon class="iconfont icon-shipin"></icon>
+            <text class="list-text">  看视频加解析次数</text>
+        </button> -->
+        <button class="center-list-item" open-type="share">
+            <icon class="iconfont icon-fenxiang"></icon>
+            <text class="list-text">  分享小程序</text>
+        </button>
+        <button bindtap="showCustomerImage" class="center-list-item" >
+            <icon class="iconfont icon-kefu"></icon>
+            <text class="list-text">  联系客服</text>
+        </button>
+        <button bindtap="showRewardImage" class="center-list-item">
+            <icon class="iconfont icon-qianbao"></icon>
+            <text class="list-text">  老板大气，赞赏一下～</text>
+        </button>
+    </view>
+    <view class="relief">Copyright © 2024 github-wuxi</view>
+</view>
