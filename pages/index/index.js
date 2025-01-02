@@ -9,10 +9,11 @@ Page({
     onShow() {
         wx.getClipboardData({
             success: res => {
-                var str = res.data.trim();
-                if (this.regUrl(str)) {
+                let str = res.data.trim();
+                let history = this.data.videoUrl.trim();
+                if (this.regUrl(str) && str != history) {
                     wx.showModal({
-                        title: '检测到剪切板有视频地址，是否自动填入？',
+                        title: '检测到剪切板有链接，是否自动填入？',
                         success: res => {
                             if (res.confirm) {
                                 this.setData({

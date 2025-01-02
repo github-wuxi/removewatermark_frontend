@@ -1,4 +1,4 @@
-<view class="top-tips">Tips：超过200M的视频需复制链接在浏览器下载~</view>
+<view class="top-tips">大视频下载容易失败，可复制链接在浏览器下载~</view>
 <view class="container">
     <view class="scroll-gap"></view>
     <view class="video-box" wx:for="{{records}}" wx:key="id">
@@ -10,7 +10,7 @@
         </view>
         <view class="btn">
             <button class="btn-left" bindtap="copyVideoUrl" data-content="{{item.videoParsedUrl}}" data-tip="已复制">复制解析后链接</button>
-            <button class="btn-right" bindtap="checkAndDownloadVideo" data-url="{{item.videoParsedUrl}}">下载解析后视频</button>
+            <button class="btn-right" bindtap="checkAndDownloadVideo" data-videoId="{{item.videoId}}">下载解析后视频</button>
         </view>
     </view>
 </view>
