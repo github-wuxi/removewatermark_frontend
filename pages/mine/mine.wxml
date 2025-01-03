@@ -3,12 +3,11 @@
         <view class="user-card">
             <view class="card-top">
                 <view class="user-top">
-                    <view class="user-vip" style="position:relative;">
-                        <image class="user-pic" src="{{userInfo != null ? userInfo.avatarUrl : '/images/my.png'}}"></image>
-                    </view>
+                    <button class="user-vip" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+                        <image class="user-pic" src="{{avatarUrl ? avatarUrl : '/images/my.png'}}"></image>
+                    </button>
                     <view class="user-board">
-                        <button wx:if="{{userInfo == null}}" class="user-name" open-type="getUserInfo" bindgetuserinfo="authorizedLogin">点此登录</button>
-                        <view wx:if="{{userInfo != null}}" class="user-name">{{userInfo.nickName}}</view>
+                        <input type="nickname" class="user-name" placeholder="{{nickName ? nickName : '点击设置昵称'}}" maxlength="12" bindblur="onInputNickname"/>
                     </view>
                 </view>
             </view>

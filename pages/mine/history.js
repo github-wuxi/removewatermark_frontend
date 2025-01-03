@@ -3,7 +3,6 @@ const APP = getApp();
 
 Component({
     data: {
-        displayIndex: 1,
         pageNum: 1,
         pageSize: 4,
         records: [],
@@ -13,7 +12,6 @@ Component({
     methods: {
         onLoad() {
             this.setData({
-                displayIndex: 1,
                 pageNum: 1,
                 hasNext: true
             });
@@ -102,16 +100,16 @@ Component({
          * @param {*} e 
          */
         checkAndDownloadVideo(e) {
-            let videoUrl = e.currentTarget.dataset.url;
+            let videoId = e.currentTarget.dataset.videoid;
             wx.getSetting({
                 success: res => {
                     if (res.authSetting['scope.writePhotosAlbum']) {
-                        this.downloadVideo(videoUrl);
+                        this.downloadVideo(videoId);
                     } else {
                         wx.authorize({
                             scope: 'scope.writePhotosAlbum',
                             success: () => {
-                                this.downloadVideo(videoUrl);
+                                this.downloadVideo(videoId);
                             },
                             fail: () => {
                                 wx.showModal({
@@ -134,36 +132,62 @@ Component({
 
         /**
          * 视频下载
-         * @param {*} originalVideoUrl 
          */
-        downloadVideo(originalVideoUrl) {
-            // let videoUrl = "https://www.ruirui.fun:443/removewatermark/download?url=" + originalVideoUrl;
-            let videoUrl = "https://aweme.snssdk.com/aweme/v1/play/?video_id=v0300fg10000cshl3lqljhtcevrn1qjg&ratio=720p&line=0";
-            let localFilePath = wx.env.USER_DATA_PATH + "/" + new Date().valueOf() + ".mp4";
+        downloadVideo(videoId) {
+            // 获取可以下载的视频地址
+            APP.apiRequest({
+                url: 'video/fetchDownloadUrl.json',
+                method: 'POST',
+                data: {
+                    videoId: videoId
+                },
+                success: res => {
+                    let videoDownloadUrl = res.data.resultData;
+                    if (UTIL.isEmpty(videoDownloadUrl)) {
+                        wx.showToast({
+                            title: '视频下载失败，请重试~',
+                            icon: 'none'
+                        });
+                        return;
+                    }
+                    this.doDownloadVideo(videoDownloadUrl);
+                }
+            });
+        },
+
+        /**
+         * 执行视频下载
+         * @param {*} videoDownloadUrl 
+         */
+        doDownloadVideo(videoDownloadUrl) {
+            // 由后端nginx代理转发，不需要小程序后台配置很多合法下载链接域名
+            let videoUrl = "https://www.ruirui.fun:443/removewatermark/download?url=" + videoDownloadUrl;
+            // let localFilePath = wx.env.USER_DATA_PATH + "/" + new Date().valueOf() + ".mp4";
             wx.showLoading({
                 title: '保存中 0%'
             });
             const downloadTask = wx.downloadFile({
                 url: videoUrl,
-                filePath: localFilePath,
+                // filePath: localFilePath,
                 header: {
                     'Content-Type': 'video/mp4'
                 },
                 success: res => {
                     wx.hideLoading();
                     wx.saveVideoToPhotosAlbum({
-                        filePath: res.filePath,
-                        success: () => {                         
+                        // filePath: res.filePath,
+                        filePath: res.tempFilePath,
+                        success: () => {
                             wx.showToast({
                                 title: '保存成功',
                                 icon: 'success',
                                 duration: 1500
                             });
                             // 删除本地文件
-                            let fileMgr = wx.getFileSystemManager();
-                            fileMgr.unlink({
-                              filePath: localFilePath
-                            });
+                            // let fileMgr = wx.getFileSystemManager();
+                            // fileMgr.unlink({
+                            //   filePath: localFilePath
+                            // });
                         },
                         fail: () => {
                             wx.showToast({
@@ -191,5 +215,5 @@ Component({
                 }
             });
         }
-  }
+    }
 })

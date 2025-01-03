@@ -5,7 +5,8 @@ Component({
     data: {
         availableNumber: '--',
         parsedNumber: '--',
-        userInfo: null
+        avatarUrl: null,
+        nickName: null
     },
 
     /**
@@ -16,11 +17,8 @@ Component({
             if (!UTIL.isAlreadyLogin()) {
                 return;
             }
-            this.setData({
-                userInfo: UTIL.fetchUserInfo()
-            });
             APP.apiRequest({
-                url: 'user/queryBizInfo.json',
+                url: 'user/queryUserInfo.json',
                 method: 'POST',
                 data: {
                     userId: UTIL.fetchOpenId()
@@ -29,34 +27,84 @@ Component({
                     if (!UTIL.isNull(res)) {
                         this.setData({
                             availableNumber: res.data.resultData.availableNumber,
-                            parsedNumber: res.data.resultData.parsedNumber
-                        })
+                            parsedNumber: res.data.resultData.parsedNumber,
+                            avatarUrl: res.data.resultData.userAvatar,
+                            nickName: res.data.resultData.userName
+                        });
                     }
                 }
             });
         },
 
         /**
-         * 授权登录
+         * 更新头像
+         * @param {*} e 
          */
-        authorizedLogin(e) {
-            console.log("authorizedLogin");
-            console.log(e);
-            if (e.detail.errMsg != 'getUserInfo:ok') {
+        onChooseAvatar(e) {
+            if (!UTIL.isAlreadyLogin()) {
                 wx.showToast({
-                    title: '未授权，登录失败',
+                    title: '登陆失败，请重新进入小程序~',
                     icon: 'none'
                 });
-                return false;
             }
-            wx.showLoading({
-                title: "正在登录",
-                mask: true
+            let tempAvatarUrl = e.detail.avatarUrl;
+            if (UTIL.isEmpty(tempAvatarUrl)) {
+                wx.showToast({
+                    title: '头像为空，请重新更新~',
+                    icon: 'none'
+                });
+            }
+            var avatarUrlBase64 = wx.getFileSystemManager().readFileSync(tempAvatarUrl, 'base64');
+            APP.apiRequest({
+                url: 'user/uploadUserAvatar.json',
+                method: 'POST',
+                data: {
+                    userId: UTIL.fetchOpenId(),
+                    avatarUrlBase64: avatarUrlBase64
+                },
+                success: res => {
+                    if (!UTIL.isEmpty(res.data.resultData)) {
+                        this.setData({
+                            avatarUrl : res.data.resultData
+                        });
+                        return;
+                    }
+                    wx.showToast({
+                        title: '头像更新失败，请重新更新~',
+                        icon: 'none'
+                    });
+                }
             });
-            // 登录
-            APP.userLogin(() => {
-                this.onShow();
-                wx.hideLoading();
+        },
+
+        /**
+         * 更新昵称
+         * @param {*} e 
+         */
+        onInputNickname(e) {
+            if (!UTIL.isAlreadyLogin()) {
+                wx.showToast({
+                    title: '登陆失败，请重新进入小程序~',
+                    icon: 'none'
+                });
+            }
+            let nickName = e.detail.value;
+            if (UTIL.isEmpty(nickName)) {
+                wx.showToast({
+                    title: '昵称为空，请重新更新~',
+                    icon: 'none'
+                });
+            }
+            this.setData({
+                nickName : nickName
+            });
+            APP.apiRequest({
+                url: 'user/updateUserInfo.json',
+                method: 'POST',
+                data: {
+                    userId: UTIL.fetchOpenId(),
+                    userName: nickName
+                }
             });
         },
 

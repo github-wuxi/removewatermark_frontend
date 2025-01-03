@@ -7,33 +7,17 @@ App({
     /**
      * 用户登录
      */
-    userLogin(callback = null) {
-        console.log("userLogin" + callback);
+    userLogin() {
         wx.login({
             success: res => {
-                console.log("wx.login");
-                console.log(res);
-                // 临时code，需要调用服务端获取openId
-                var code = res.code;
-                wx.getSetting({
-                    success: res => {
-                        console.log("wx.getSetting");
-                        console.log(res);
-                        if (res.authSetting['scope.userInfo']) {
-                            // 已经授权查询用户信息
-                            wx.getUserInfo({
-                                success: res => {
-                                    console.log("wx.getUserInfo");
-                                    console.log(res);
-                                    UTIL.saveUserInfo(res.userInfo);
-                                    this.signInAndSaveOpenId(code, res.userInfo.nickName, res.userInfo.avatarUrl, callback);
-                                }
-                            })
-                        } else {
-                            this.jumpPersonalToLogin();
-                        }
-                    }
-                })
+                // 临时code，需要调用服务端获取用户唯一的openId
+                this.signInAndSaveOpenId(res.code);
+            },
+            fail: () => {
+                wx.showToast({
+                    title: '登陆失败，请重新进入小程序~',
+                    icon: 'none'
+                });
             }
         });
     },
@@ -50,19 +34,15 @@ App({
     /**
      * 签到和保存用户开放id
      */
-    signInAndSaveOpenId(code, nickName, avatarUrl, callback) {
+    signInAndSaveOpenId(code) {
         // 调用后端登录接口，即签到
         this.apiRequest({
             url: 'user/login.json',
             method: 'POST',
             data: {
-                code: code,
-                nickName: nickName,
-                avatarUrl: avatarUrl
+                code: code
             },
             success: res => {
-                console.log("signInAndSaveOpenId");
-                console.log(res);
                 if (!UTIL.isEmpty(res.data.resultData.todayFirstTimeLoginText)) {
                     wx.showToast({
                         title: res.data.resultData.todayFirstTimeLoginText,
@@ -71,7 +51,9 @@ App({
                     });
                 }
                 UTIL.saveOpenId(res.data.resultData.openId);
-                callback && callback();
+            },
+            fail: () => {
+                UTIL.saveOpenId(null);
             }
         });
     },
@@ -90,11 +72,9 @@ App({
             dataType: 'json',
             data: options.data,
             success: res => {
-                console.log("apiRequest success");
-                console.log(res);
                 switch (res.statusCode) {
                     case 200:
-                        if (res.data.success) {
+                        if (res.data.success && options.success) {
                             options.success(res);
                         } else {
                             if (options.fail) {
@@ -127,8 +107,6 @@ App({
                 }
             },
             fail: res => {
-                console.log("apiRequest fail");
-                console.log(res);
                 if (options.fail) {
                     options.fail(res);
                 }

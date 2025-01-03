@@ -115,6 +115,7 @@ wx-button::after {
     -ms-flex-pack: center;
     justify-content: center;
     margin-top: 20rpx;
+    text-align: center;
 }
 
 .center  .blue-top  .user-card  .card-top  .user-top  .user-board  .user-name {
