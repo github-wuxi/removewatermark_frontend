@@ -148,7 +148,7 @@ button:last-child {
 .platforms-title {
     display: block;
     font-size: 24rpx;
-    color: #999999;
+    color: #555555;
     text-align: center;
     padding-top: 0rpx;
 }

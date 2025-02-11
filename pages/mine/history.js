@@ -68,10 +68,16 @@ Component({
                     userId: UTIL.fetchOpenId()
                 },
                 success: res => {
-                    this.setData({
-                        records: res.data.resultData.videoList,
-                        hasNext: res.data.resultData.hasNext
-                    })
+                    if (UTIL.isNull(res.data.resultData.videoList) || res.data.resultData.videoList.length <= 0) {
+                        this.setData({
+                            hasNext: false
+                        });
+                    } else {
+                        this.setData({
+                            records: this.data.records.concat(res.data.resultData.videoList),
+                            hasNext: res.data.resultData.hasNext
+                        });
+                    }
                 },
                 complete: () => {
                     wx.hideLoading();

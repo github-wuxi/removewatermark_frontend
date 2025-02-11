@@ -6,8 +6,8 @@ page {
 }
 
 .top-tips {
-    text-align: center;
-    font-size: 30rpx;
+    text-align: left;
+    font-size: 26rpx;
     color: rgb(175, 0, 0);
 }
 

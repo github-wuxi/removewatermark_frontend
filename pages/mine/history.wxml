@@ -1,4 +1,5 @@
-<view class="top-tips">大视频下载容易失败，可复制链接在浏览器下载~</view>
+<view class="top-tips">1、大视频下载容易失败，可复制链接在浏览器下载</view>
+<view class="top-tips">2、抖音封面照片仅14天有效期（超期黑屏），不影响视频下载</view>
 <view class="container">
     <view class="scroll-gap"></view>
     <view class="video-box" wx:for="{{records}}" wx:key="id">
