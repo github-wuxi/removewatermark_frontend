@@ -12,6 +12,6 @@
             </button>
         </view>
         <button bindtap="submit" class="parsing" hoverClass="parsing-btn-hover">一键去除水印</button>
-        <text class="platforms-title">水印一键清理宝当前支持短视频平台：抖音、快手</text>
+        <text class="platforms-title">水印一键清理宝当前支持短视频：抖音、小红书、快手</text>
     </view>
 </view>
