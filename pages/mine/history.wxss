@@ -7,6 +7,7 @@ page {
 
 .top-tips {
     text-align: left;
+    margin-left: 26rpx;
     font-size: 26rpx;
     color: rgb(175, 0, 0);
 }

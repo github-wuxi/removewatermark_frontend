@@ -11,13 +11,6 @@ Component({
 
     methods: {
         onLoad() {
-            this.setData({
-                pageNum: 1,
-                hasNext: true
-            });
-        },
-
-        onShow() {
             this.queryRecords();
         },
         
