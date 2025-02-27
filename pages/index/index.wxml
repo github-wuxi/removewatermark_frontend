@@ -1,6 +1,7 @@
 <view class="wrap">
     <view class="platforms">
         <view class="page-body">
+            <ad unit-id="adunit-870baf0bc40ce5bd" ad-intervals="30" ad-type="video"></ad>
         </view>
     </view>
     <view class="watermark">

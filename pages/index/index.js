@@ -1,9 +1,50 @@
 const APP = getApp()
 const UTIL = require('../../utils/util.js');
+const AD_REWARD_NUM = 2;
+let rewardedVideoAd = null;
 
 Page({
     data: {
         videoUrl: 'https://v.douyin.com/'
+    },
+
+    onLoad() {
+        // 激励广告
+        if(wx.createRewardedVideoAd){
+            rewardedVideoAd = wx.createRewardedVideoAd({
+                adUnitId: 'adunit-492966e7a80497b8'
+            });
+            rewardedVideoAd.onClose(res => {
+                if (res && res.isEnded) {
+                    // 用户完整观看了视频，给予激励
+                    APP.apiRequest({
+                        url: 'user/reward.json',
+                        method: 'POST',
+                        data: {
+                            userId: UTIL.fetchOpenId(),
+                            rewardNum: AD_REWARD_NUM
+                        },
+                        success: () => {
+                            wx.showToast({
+                                title: '已获取' + AD_REWARD_NUM + '次解析次数',
+                                icon: 'none'
+                            });
+                        },
+                        fail: () => {
+                            wx.showToast({
+                                title: '系统异常，请重试~',
+                                icon: 'none'
+                            });
+                        }
+                    });
+                } else {
+                    wx.showToast({
+                        title: '未完整观看广告，无法获得奖励',
+                        icon: 'none'
+                    });
+                }
+            });
+        };
     },
 
     onShow() {
@@ -47,40 +88,7 @@ Page({
             return;
         }
         this.parseVideo();
-
-    //   wx.showToast({
-    //     title: '免费解析次数已用完！',
-    //     icon: 'none'
-    //   })
-
-
-
-
-      // // 超免费次数需要观看激励广告
-      // wx.showModal({
-      //   title: "解析视频",
-      //   content: "免费解析次数已用完，需观看完广告才可继续解析！",
-      //   confirmColor: "#00B269",
-      //   cancelColor: "#858585",
-      //   success: (res) => {
-      //     if (res.confirm) {
-      //       videoAd.show().catch(() => {
-      //         // 失败重试
-      //         videoAd.load()
-      //           .then(() => videoAd.show())
-      //           .catch(err => {
-      //             console.log('激励视频 广告显示失败')
-      //           })
-      //       })
-      //     } else if (res.cancel) {
-      //       wx.showToast({
-      //         title: '广告观看完才可继续解析！',
-      //         icon: 'none'
-      //       })
-      //     }
-      //   }
-      // })
-  },
+    },
 
     parseVideo: function () {
         APP.apiRequest({
@@ -94,7 +102,44 @@ Page({
                 wx.navigateTo({
                     url: "/pages/mine/history"
                 });
+            },
+            fail: res => {
+                if (res.data.errorCode == 'NONE_AVAILABLE_PARSE_COUNT') {
+                    this.guideShowRewardedVideoAd();
+                } else {
+                    wx.showToast({
+                        title: res.data.errorMsg,
+                        icon: 'none'
+                    });
+                }
             }
-    })
-  }
+        });
+    },
+    
+    /**
+     * 引导展示激励广告
+     */
+    guideShowRewardedVideoAd: function () {
+        wx.showModal({
+            title: '可用解析次数不足',
+            content: '观看完广告可获取' + AD_REWARD_NUM + '次解析次数',
+            confirmColor: "#00B269",
+            cancelColor: "#858585",
+            success: res => {
+                if (res.confirm) {
+                    rewardedVideoAd.show().catch(() => {
+                        // 如果广告未加载成功，重新加载
+                        rewardedVideoAd.load().then(() => {
+                            rewardedVideoAd.show();
+                        }).catch(() => {
+                            wx.showToast({
+                                title: '广告加载失败，请稍后重试~',
+                                icon: 'none'
+                            });
+                        });
+                    });
+                }
+            }
+        });
+    }
 })
