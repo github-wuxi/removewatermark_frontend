@@ -74,8 +74,10 @@ App({
             success: res => {
                 switch (res.statusCode) {
                     case 200:
-                        if (res.data.success && options.success) {
-                            options.success(res);
+                        if (res.data.success) {
+                            if (options.success) {
+                                options.success(res);
+                            }
                         } else {
                             if (options.fail) {
                                 options.fail(res);

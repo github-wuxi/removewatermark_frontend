@@ -10,8 +10,8 @@ page {
 }
 
 .page-body {
-    height: 700rpx;
-    padding-top: 28rpx;
+    height: 730rpx;
+    padding-top: 0rpx;
 }
 
 .page-section {
