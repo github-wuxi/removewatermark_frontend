@@ -14,6 +14,7 @@ Page({
             rewardedVideoAd = wx.createRewardedVideoAd({
                 adUnitId: 'adunit-492966e7a80497b8'
             });
+            rewardedVideoAd.onError(err => {});
             rewardedVideoAd.onClose(res => {
                 if (res && res.isEnded) {
                     // 用户完整观看了视频，给予激励

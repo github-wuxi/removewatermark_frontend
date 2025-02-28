@@ -32,10 +32,10 @@
             <icon class="iconfont icon-jilu"></icon>
             <text class="list-text">  我的解析记录</text>
         </navigator>
-        <!-- <button class="center-list-item" open-type="contact">
+        <button bindtap="watchShortRewardedAd" class="center-list-item" >
             <icon class="iconfont icon-shipin"></icon>
-            <text class="list-text">  看视频加解析次数</text>
-        </button> -->
+            <text class="list-text">  看完短广告，加1次解析次数！</text>
+        </button>
         <button class="center-list-item" open-type="share">
             <icon class="iconfont icon-fenxiang"></icon>
             <text class="list-text">  分享小程序</text>
