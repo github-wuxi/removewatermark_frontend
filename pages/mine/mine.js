@@ -1,5 +1,6 @@
 const UTIL = require('../../utils/util.js');
 const APP = getApp();
+let shortRewardedAd = null;
 
 Component({
     data: {
@@ -13,6 +14,10 @@ Component({
      * 组件的方法列表
      */
     methods: {
+        onLoad() {
+            shortRewardedAd = APP.createRewardedAdInstance('adunit-4634dc8afd55654f', 1, this.onShow);
+        },
+
         onShow() {
             if (!UTIL.isAlreadyLogin()) {
                 return;
@@ -153,6 +158,13 @@ Component({
                     });
                 }
             }
+        },
+
+        /**
+         * 看短激励广告
+         */
+        watchShortRewardedAd() {
+            APP.showRewardedAd(shortRewardedAd);
         },
     }
 })

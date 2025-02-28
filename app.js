@@ -59,6 +59,73 @@ App({
     },
 
     /**
+     * 创建激励广告实例
+     */
+    createRewardedAdInstance(adUnitId, rewardNum, options) {
+        let instance = null;
+        if (wx.createRewardedVideoAd) {
+            instance = wx.createRewardedVideoAd({
+                adUnitId: adUnitId
+            });
+            instance.onError(err => {});
+            instance.onClose(res => {
+                if (res && res.isEnded) {
+                    // 用户完整观看了视频，给予激励
+                    this.apiRequest({
+                        url: 'user/reward.json',
+                        method: 'POST',
+                        data: {
+                            userId: UTIL.fetchOpenId(),
+                            rewardNum: rewardNum
+                        },
+                        success: () => {
+                            wx.showToast({
+                                title: '已获取' + rewardNum +'次解析次数',
+                                icon: 'none'
+                            });
+                            if (options) {
+                                options();
+                            }
+                        },
+                        fail: () => {
+                            wx.showToast({
+                                title: '系统异常，请重试~',
+                                icon: 'none'
+                            });
+                        }
+                    });
+                } else {
+                    wx.showToast({
+                        title: '未完整观看广告，无法获得奖励',
+                        icon: 'none'
+                    });
+                }
+            });
+        };
+        return instance;
+    },
+
+    /**
+    * 展示短激励广告
+    */
+    showRewardedAd(instance) {
+        if (!instance) {
+            return;
+        }
+        instance.show().catch(() => {
+            // 如果广告未加载成功，重新加载
+            instance.load().then(() => {
+                instance.show();
+            }).catch(() => {
+                wx.showToast({
+                    title: '广告加载失败，请稍后重试~',
+                    icon: 'none'
+                });
+            });
+        });
+    },
+
+    /**
      * http请求，与服务端通信
      * @param {*} options 
      */
