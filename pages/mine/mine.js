@@ -15,44 +15,7 @@ Component({
      */
     methods: {
         onLoad() {
-            // 激励广告
-            if (wx.createRewardedVideoAd) {
-                shortRewardedAd = wx.createRewardedVideoAd({
-                    adUnitId: 'adunit-4634dc8afd55654f'
-                });
-                shortRewardedAd.onError(err => {});
-                shortRewardedAd.onClose(res => {
-                    if (res && res.isEnded) {
-                        // 用户完整观看了视频，给予激励
-                        APP.apiRequest({
-                            url: 'user/reward.json',
-                            method: 'POST',
-                            data: {
-                                userId: UTIL.fetchOpenId(),
-                                rewardNum: 1
-                            },
-                            success: () => {
-                                wx.showToast({
-                                    title: '已获取1次解析次数',
-                                    icon: 'none'
-                                });
-                                this.onShow();
-                            },
-                            fail: () => {
-                                wx.showToast({
-                                    title: '系统异常，请重试~',
-                                    icon: 'none'
-                                });
-                            }
-                        });
-                    } else {
-                        wx.showToast({
-                            title: '未完整观看广告，无法获得奖励',
-                            icon: 'none'
-                        });
-                    }
-                });
-            };
+            shortRewardedAd = APP.createRewardedAdInstance('adunit-4634dc8afd55654f', 1, this.onShow);
         },
 
         onShow() {
@@ -201,17 +164,7 @@ Component({
          * 看短激励广告
          */
         watchShortRewardedAd() {
-            shortRewardedAd.show().catch(() => {
-                // 如果广告未加载成功，重新加载
-                shortRewardedAd.load().then(() => {
-                    shortRewardedAd.show();
-                }).catch(() => {
-                    wx.showToast({
-                        title: '广告加载失败，请稍后重试~',
-                        icon: 'none'
-                    });
-                });
-            });
+            APP.showRewardedAd(shortRewardedAd);
         },
     }
 })

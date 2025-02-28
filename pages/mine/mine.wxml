@@ -34,7 +34,7 @@
         </navigator>
         <button bindtap="watchShortRewardedAd" class="center-list-item" >
             <icon class="iconfont icon-shipin"></icon>
-            <text class="list-text">  看完短广告，加1次解析次数！</text>
+            <text class="list-text">  看超短广告，加1次解析次数！</text>
         </button>
         <button class="center-list-item" open-type="share">
             <icon class="iconfont icon-fenxiang"></icon>

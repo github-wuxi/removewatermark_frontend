@@ -9,43 +9,7 @@ Page({
     },
 
     onLoad() {
-        // 激励广告
-        if(wx.createRewardedVideoAd){
-            rewardedVideoAd = wx.createRewardedVideoAd({
-                adUnitId: 'adunit-492966e7a80497b8'
-            });
-            rewardedVideoAd.onError(err => {});
-            rewardedVideoAd.onClose(res => {
-                if (res && res.isEnded) {
-                    // 用户完整观看了视频，给予激励
-                    APP.apiRequest({
-                        url: 'user/reward.json',
-                        method: 'POST',
-                        data: {
-                            userId: UTIL.fetchOpenId(),
-                            rewardNum: AD_REWARD_NUM
-                        },
-                        success: () => {
-                            wx.showToast({
-                                title: '已获取' + AD_REWARD_NUM + '次解析次数',
-                                icon: 'none'
-                            });
-                        },
-                        fail: () => {
-                            wx.showToast({
-                                title: '系统异常，请重试~',
-                                icon: 'none'
-                            });
-                        }
-                    });
-                } else {
-                    wx.showToast({
-                        title: '未完整观看广告，无法获得奖励',
-                        icon: 'none'
-                    });
-                }
-            });
-        };
+        rewardedVideoAd = APP.createRewardedAdInstance('adunit-492966e7a80497b8', AD_REWARD_NUM);
     },
 
     onShow() {
@@ -123,22 +87,12 @@ Page({
     guideShowRewardedVideoAd: function () {
         wx.showModal({
             title: '可用解析次数不足',
-            content: '观看完广告可获取' + AD_REWARD_NUM + '次解析次数',
+            content: '观看广告可获取' + AD_REWARD_NUM + '次解析次数',
             confirmColor: "#00B269",
             cancelColor: "#858585",
             success: res => {
                 if (res.confirm) {
-                    rewardedVideoAd.show().catch(() => {
-                        // 如果广告未加载成功，重新加载
-                        rewardedVideoAd.load().then(() => {
-                            rewardedVideoAd.show();
-                        }).catch(() => {
-                            wx.showToast({
-                                title: '广告加载失败，请稍后重试~',
-                                icon: 'none'
-                            });
-                        });
-                    });
+                    APP.showRewardedAd(rewardedVideoAd);
                 }
             }
         });
